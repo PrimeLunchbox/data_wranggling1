@@ -30,3 +30,18 @@ tail(litters_df)
 ```{r}
 skimr::skim(litters_df)
 ```
+
+## Options to raed_csv
+
+```{r}
+litters_df = read_csv("./data/FAS_litters.csv", na = c("", "NA", ".", 999))
+# read_csv know there supposed to be missing values, and stored as "."
+```
+
+```{r}
+litters_df = read_csv("./data/FAS_litters.csv", skip = 10, col_names = FALSE)
+#skip the first 10 rows and rename the column name characters by default
+```
+
+
+check ou tread_csv for more info
