@@ -69,3 +69,16 @@ mlb_df
 pulse_df = read_sas("./data/public_pulse_data.sas7bdat")
 pulse_df
 ```
+
+## Comparison with base R
+what abt "read.csv"?
+
+```{r}
+litters_base = read.csv("./data/FAS_litters.csv")
+litters_readr = read_csv("./data/FAS_litters.csv")
+
+litters_base
+litters_readr
+```
+
+By default "read.csv" print out entire data set, giving more information and the space in column names is change into ".", more difficult to take a look at.
