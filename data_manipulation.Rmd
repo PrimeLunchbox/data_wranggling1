@@ -13,3 +13,52 @@ library(tidyverse)
 litters_df = read.csv("./data/FAS_litters.csv")
 litters_df = janitor::clean_names(litters_df)
 ```
+
+
+## Take a look at "select()"
+Choose some columns and not others.
+
+
+tell "select()" which column I want to keep.
+```{r}
+select(litters_df, group, gd0_weight)
+```
+
+
+specify the column range selected
+```{r}
+select(litters_df, group, gd0_weight:gd_of_birth)
+```
+
+to exclude a certain column
+```{r}
+select(litters_df, -litter_number)
+```
+
+renaming columns,
+```{r}
+select(litters_df, GROUP = group, LitteR_nummber = litter_number)
+```
+or
+```{r}
+rename(litters_df, GROUP = group, LittEr_number = litter_number)
+```
+
+
+
+
+Select helpers
+
+Select columns that start with "gd"
+```{r}
+select(litters_df, starts_with("gd"))
+```
+
+Select one column and keep everything else.
+```{r}
+select(litters_df, litter_number, everything())
+```
+this function does the same thing as the one above (relocating the "litter_number"column to the first)
+```{r}
+relocate(litters_df, litter_number)
+```
