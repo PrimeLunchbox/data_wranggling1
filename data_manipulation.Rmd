@@ -62,3 +62,43 @@ this function does the same thing as the one above (relocating the "litter_numbe
 ```{r}
 relocate(litters_df, litter_number)
 ```
+
+## "filter"
+
+```{r}
+filter(litters_df, gd0_weight < 22)
+```
+
+
+```{r}
+filter(litters_df, gd0_weight >= 22)
+```
+
+
+test for equality, not to assign value to a variable.
+```{r}
+filter(litters_df, gd_of_birth == 20)
+```
+
+
+"!=" selects values that are not equal to a certain value
+```{r}
+filter(litters_df, gd_of_birth != 20)
+```
+
+
+select columns that satisfy more than one in a single command
+```{r}
+filter(litters_df, gd0_weight >= 22, gd_of_birth == 20)
+```
+
+
+select row
+```{r}
+filter(litters_df, group == "Mod8")
+```
+
+select collection of rows
+```{r}
+filter(litters_df, group %in% c("Con7", "Mod8"))
+```
