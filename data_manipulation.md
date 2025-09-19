@@ -1324,3 +1324,37 @@ arrange(litters_df, pups_born_alive, gd0_weight)
     ## 47               0            9
     ## 48               0            7
     ## 49               0            9
+
+## Pipe operation “%\>%”
+
+``` r
+litters_data_raw = read_csv("./data/FAS_litters.csv")
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (4): Group, Litter Number, GD0 weight, GD18 weight
+    ## dbl (4): GD of Birth, Pups born alive, Pups dead @ birth, Pups survive
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+litters_clean_name = janitor::clean_names(litters_data_raw)
+litters_data_selected = select(litters_clean_name, -pups_survive)
+
+# change the characteristic variable to numeric variable in the two columns
+litters_data_selected$gd0_weight[litters_data_selected$gd0_weight %in% c(".")] <- NA
+litters_data_selected$gd18_weight[litters_data_selected$gd18_weight %in% c(".")] <- NA
+
+litters_data_selected$gd0_weight <- as.numeric(litters_data_selected$gd0_weight)
+litters_data_selected$gd18_weight <- as.numeric(litters_data_selected$gd18_weight)
+
+# form a new data frame with a new column "wt_gain"
+litters_mutated = mutate(litters_data_selected, wt_gain = gd18_weight - gd0_weight)
+
+
+# drop NAs in the column
+litters_without_missing = drop_na(litters_mutated, gd0_weight)
+```
