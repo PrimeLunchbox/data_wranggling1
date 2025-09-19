@@ -102,3 +102,21 @@ select collection of rows
 ```{r}
 filter(litters_df, group %in% c("Con7", "Mod8"))
 ```
+
+
+
+## "mutate"
+modify/ creat variable
+
+```{r}
+litters_df$gd0_weight[litters_df$gd0_weight %in% c("NA", ".", "")] <- NA
+litters_df$gd18_weight[litters_df$gd18_weight %in% c("NA", ".", "")] <- NA
+
+litters_df$gd0_weight <- as.numeric(litters_df$gd0_weight)
+litters_df$gd18_weight <- as.numeric(litters_df$gd18_weight)
+
+mutate(litters_df, 
+       wt_gain = gd18_weight - gd0_weight, 
+       group = str_to_lower(group))
+```
+
