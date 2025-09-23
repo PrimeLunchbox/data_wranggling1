@@ -42,10 +42,10 @@ rewrite, combine, and extend (adding mutate)
 pulse_data = 
   haven::read_sas("./data/public_pulse_data.sas7bdat") %>% janitor::clean_names() %>%
   pivot_longer(
-    bdi_score_bl:bdi_score_12m, 
-    names_to = "visit",
+    bdi_score_bl:bdi_score_12m, # merge data from column a to column b.
+    names_to = "visit", # name of column that data being merged to
     names_prefix = "bdi_score_",# hide prefix in new column
-    values_to = "bdi"
+    values_to = "bdi" # column to put values in
   ) %>%
   relocate(id, visit) %>% 
   mutate(visit = recode(visit, "bl" = "00m"))
@@ -74,3 +74,32 @@ analysis_result %>% pivot_wider(
     ##   <chr>     <dbl> <dbl>
     ## 1 treatment   4       8
     ## 2 placebo     3.5     4
+
+## binding rows, using the LotR data.
+
+1: import each table
+
+``` r
+fellowship_ring = 
+  readxl::read_excel("./data/LotR_Words.xlsx", range = "B3:D6") %>% mutate(movie = "fellowship_ring") # add a new column called "fellowship_ring"
+
+two_towers = 
+  readxl::read_excel("./data/LotR_Words.xlsx", range = "F3:H6") %>% mutate(movie = "two_towers")
+
+return_king = 
+  readxl::read_excel("./data/LotR_Words.xlsx", range = "J3:L6") %>% mutate(movie = "return_king")
+```
+
+Bind all the rows together
+
+``` r
+lotr_tidy = 
+  bind_rows(fellowship_ring, two_towers, return_king) %>% 
+  janitor::clean_names() %>%
+  relocate(movie) %>% 
+  pivot_longer(
+    female:male, 
+    names_to = "gender", 
+    values_to = "words"
+  )
+```
