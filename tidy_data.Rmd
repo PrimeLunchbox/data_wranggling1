@@ -1,5 +1,5 @@
 ---
-title: "Data Manipulation"
+title: "Tidy Data"
 output: github_document
 ---
 
@@ -7,150 +7,37 @@ output: github_document
 library(tidyverse)
 ```
 
-## Load in FAS_litters data
+## "pivot_longer"
 
 ```{r}
-litters_df = read.csv("./data/FAS_litters.csv")
-litters_df = janitor::clean_names(litters_df)
+pulse_data = 
+  haven::read_sas("./data/public_pulse_data.sas7bdat") %>% janitor::clean_names()
 ```
 
-
-## Take a look at "select()"
-Choose some columns and not others.
-
-
-tell "select()" which column I want to keep.
-```{r}
-select(litters_df, group, gd0_weight)
-```
-
-
-specify the column range selected
-```{r}
-select(litters_df, group, gd0_weight:gd_of_birth)
-```
-
-to exclude a certain column
-```{r}
-select(litters_df, -litter_number)
-```
-
-renaming columns,
-```{r}
-select(litters_df, GROUP = group, LitteR_nummber = litter_number)
-```
-or
-```{r}
-rename(litters_df, GROUP = group, LittEr_number = litter_number)
-```
-
-
-
-
-Select helpers
-
-Select columns that start with "gd"
-```{r}
-select(litters_df, starts_with("gd"))
-```
-
-Select one column and keep everything else.
-```{r}
-select(litters_df, litter_number, everything())
-```
-this function does the same thing as the one above (relocating the "litter_number"column to the first)
-```{r}
-relocate(litters_df, litter_number)
-```
-
-## "filter"
+wide to long format
 
 ```{r}
-filter(litters_df, gd0_weight < 22)
+pulse_data_tidy = 
+  pulse_data %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m, 
+    names_to = "visit",
+    names_prefix = "bdi_score_",# hide prefix in new column
+    values_to = "bdi"
+  )
 ```
 
+rewrite, combine, and extend (adding mutate)
 
 ```{r}
-filter(litters_df, gd0_weight >= 22)
+pulse_data = 
+  haven::read_sas("./data/public_pulse_data.sas7bdat") %>% janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m, 
+    names_to = "visit",
+    names_prefix = "bdi_score_",# hide prefix in new column
+    values_to = "bdi"
+  ) %>%
+  relocate(id, visit) %>% 
+  mutate(visit = recode(visit, "bl" = "00m"))
 ```
-
-
-test for equality, not to assign value to a variable.
-```{r}
-filter(litters_df, gd_of_birth == 20)
-```
-
-
-"!=" selects values that are not equal to a certain value
-```{r}
-filter(litters_df, gd_of_birth != 20)
-```
-
-
-select columns that satisfy more than one in a single command
-```{r}
-filter(litters_df, gd0_weight >= 22, gd_of_birth == 20)
-```
-
-
-select row
-```{r}
-filter(litters_df, group == "Mod8")
-```
-
-select collection of rows
-```{r}
-filter(litters_df, group %in% c("Con7", "Mod8"))
-```
-
-
-
-## "mutate"
-modify/ creat variable
-
-```{r}
-litters_df$gd0_weight[litters_df$gd0_weight %in% c("NA", ".", "")] <- NA
-litters_df$gd18_weight[litters_df$gd18_weight %in% c("NA", ".", "")] <- NA
-
-litters_df$gd0_weight <- as.numeric(litters_df$gd0_weight)
-litters_df$gd18_weight <- as.numeric(litters_df$gd18_weight)
-
-mutate(litters_df, 
-       wt_gain = gd18_weight - gd0_weight, 
-       group = str_to_lower(group))
-```
-
-## Arrange
-
-```{r}
-arrange(litters_df, pups_born_alive)
-```
-
-arrange two columns simultaneously (with order: column "pups_born_alive"first and then "gd0_weight")
-```{r}
-arrange(litters_df, pups_born_alive, gd0_weight)
-```
-
-## Pipe operation "%>%"
-
-```{r}
-litters_data_raw = read_csv("./data/FAS_litters.csv")
-litters_clean_name = janitor::clean_names(litters_data_raw)
-litters_data_selected = select(litters_clean_name, -pups_survive)
-
-# change the characteristic variable to numeric variable in the two columns
-litters_data_selected$gd0_weight[litters_data_selected$gd0_weight %in% c(".")] <- NA
-litters_data_selected$gd18_weight[litters_data_selected$gd18_weight %in% c(".")] <- NA
-
-litters_data_selected$gd0_weight <- as.numeric(litters_data_selected$gd0_weight)
-litters_data_selected$gd18_weight <- as.numeric(litters_data_selected$gd18_weight)
-
-# form a new data frame with a new column "wt_gain"
-litters_mutated = mutate(litters_data_selected, wt_gain = gd18_weight - gd0_weight)
-
-
-# drop NAs in the column
-litters_without_missing = drop_na(litters_mutated, gd0_weight)
-```
-
-
