@@ -103,3 +103,40 @@ lotr_tidy =
     values_to = "words"
   )
 ```
+
+## joining data sets
+
+import FAS data sets
+
+``` r
+pups_df = 
+  read_csv("./data/FAS_pups.csv") %>% 
+  janitor::clean_names() 
+```
+
+    ## New names:
+    ## Rows: 316 Columns: 6
+    ## ── Column specification
+    ## ──────────────────────────────────────────────────────── Delimiter: "," chr
+    ## (6): ...1, 1 = male, 2 = female, ...3, ...4, ...5, ...6
+    ## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+    ## Specify the column types or set `show_col_types = FALSE` to quiet this message.
+    ## • `` -> `...1`
+    ## • `` -> `...3`
+    ## • `` -> `...4`
+    ## • `` -> `...5`
+    ## • `` -> `...6`
+
+``` r
+litters_df = 
+  read_csv("./data/FAS_litters.csv")
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (4): Group, Litter Number, GD0 weight, GD18 weight
+    ## dbl (4): GD of Birth, Pups born alive, Pups dead @ birth, Pups survive
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
